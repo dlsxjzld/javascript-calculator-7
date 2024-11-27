@@ -94,7 +94,7 @@ describe('문자열 계산기', () => {
     }).toThrow('[ERROR]');
   });
 
-  test.only('구분자가 아닌 문자가 섞여있으면 에러 발생', () => {
+  test('구분자가 아닌 문자가 섞여있으면 에러 발생', () => {
     const hasStringType = (input) => {
       const splitInputs = input.split(new RegExp([',', ':'].join('|'))).map(Number);
       toThrowNewError(
@@ -105,6 +105,19 @@ describe('문자열 계산기', () => {
 
     expect(() => {
       hasStringType('1,2a');
+    }).toThrow('[ERROR]');
+  });
+  test.only('0이하면 에러 발생', () => {
+    const isPositiveNumber = (input) => {
+      const splitInputs = input.split(new RegExp([',', ':'].join('|'))).map(Number);
+      toThrowNewError(
+        splitInputs.some((splitInput) => splitInput <= 0),
+        '1 이상만 가능합니다.',
+      );
+    };
+
+    expect(() => {
+      isPositiveNumber('1,2,0,-1');
     }).toThrow('[ERROR]');
   });
 });
