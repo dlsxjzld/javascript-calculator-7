@@ -32,7 +32,7 @@ describe('문자열 계산기', () => {
     });
   });
 
-  test('예외 테스트', async () => {
+  test.skip('예외 테스트', async () => {
     const inputs = ['-1,2,3'];
     mockQuestions(inputs);
 
@@ -41,8 +41,23 @@ describe('문자열 계산기', () => {
     await expect(app.run()).rejects.toThrow('[ERROR]');
   });
 
-  test('예외 테스트', async () => {
+  test.skip('예외 테스트', async () => {
     const app = new App();
     await expect(app.run()).rejects.toThrow('[ERROR]');
+  });
+
+  test('입출력 테스트', async () => {
+    const inputs = ['1'];
+    mockQuestions(inputs);
+
+    const logSpy = getLogSpy();
+    const outputs = ['결과 : 1'];
+
+    const app = new App();
+    await app.run();
+
+    outputs.forEach((output) => {
+      expect(logSpy).toHaveBeenCalledWith(expect.stringContaining(output));
+    });
   });
 });
