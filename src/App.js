@@ -1,6 +1,7 @@
 import { Input, Output } from './View.js';
 
 const DELIMITER = [',', ':'];
+const escapeRegExp = (string) => string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $&은 일치한 문자열 전체를 의미
 
 const toThrowNewError = (condition, message) => {
   if (condition) {
@@ -12,16 +13,23 @@ const hasEmptySpace = (input) => {
   toThrowNewError(input.includes(' '), '공백을 포함하면 안됩니다.');
 };
 
+const convertType = (val) => {
+  if (val === '') {
+    return NaN;
+  }
+  return Number(val);
+};
+
 const hasStringType = (input) => {
-  const splitInputs = input.split(new RegExp(DELIMITER.join('|'))).map(Number);
+  const splitInputs = input.split(new RegExp(DELIMITER.map(escapeRegExp).join('|'))).map(convertType);
   toThrowNewError(
     splitInputs.some((splitInput) => !Number.isInteger(splitInput)),
-    '구분자가 아닌 문자가 섞여있습니다.',
+    '구분자와 문자를 알맞게 입력해주세요. 구분자는 문자 보다 하나 적어야 합니다.',
   );
 };
 
 const isPositiveNumber = (input) => {
-  const splitInputs = input.split(new RegExp(DELIMITER.join('|'))).map(Number);
+  const splitInputs = input.split(new RegExp(DELIMITER.map(escapeRegExp).join('|'))).map(Number);
   toThrowNewError(
     splitInputs.some((splitInput) => splitInput <= 0),
     '1 이상만 가능합니다.',
@@ -33,45 +41,42 @@ const check = (input) => {
   hasStringType(input);
   isPositiveNumber(input);
 };
-const escapeRegExp = (string) => string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $&은 일치한 문자열 전체를 의미
 
 class App {
-  result;
+  escapedUserInput;
 
   async run() {
-    // throw new Error('[ERROR] 에러 발생 ');
     const userInput = await Input.readUserInput();
     if (userInput === '') {
-      this.checkEmptyString(userInput);
+      Output.printResult(0);
       return;
     }
-    let escapedUserInput = escapeRegExp(userInput);
-
-    const matched = escapedUserInput.match(/\/\/(.*)\\\\n/);
-    console.log('matched', matched);
-    if (matched !== null) {
-      const [cutString, customDelimiter] = matched;
-      escapedUserInput = escapedUserInput.replace(cutString, '');
-      // console.log('escapedUserInput', escapedUserInput);
-      if (customDelimiter !== '') {
-        DELIMITER.unshift(customDelimiter);
-      }
-    }
-
-    // TODO: 커스텀 구분자 있으면 추가해야함
-    // TODO: 커스텀 구분자 추가했으면 userInput에서 커스텀 구분자 지워야함
-
-    check(escapedUserInput);
-    // TODO: 검증 로직 필요
-
-    this.input = escapedUserInput.split(new RegExp(DELIMITER.join('|'))).map(Number);
-
-    Output.printResult(escapedUserInput);
+    this.getEscapedUserInput(userInput);
+    check(this.escapedUserInput);
+    Output.printResult(this.add());
   }
 
-  checkEmptyString(input) {
-    this.result = Number(input);
-    Output.printResult(this.result);
+  add() {
+    const numbers = this.escapedUserInput.split(new RegExp(DELIMITER.map(escapeRegExp).join('|'))).map(Number);
+    return numbers.reduce((a, b) => a + b, 0);
+  }
+
+  getEscapedUserInput(userInput) {
+    this.escapedUserInput = escapeRegExp(userInput);
+    const matched = this.escapedUserInput.match(/^\/\/(.*)\\\\n/);
+    if (matched === null) {
+      return;
+    }
+    const [cutString, customDelimiter] = matched;
+    this.escapedUserInput = this.escapedUserInput.replace(cutString, '');
+    this.getCustomDelimiter(customDelimiter);
+  }
+
+  getCustomDelimiter(customDelimiter) {
+    if (customDelimiter === '') {
+      return;
+    }
+    DELIMITER.unshift(customDelimiter);
   }
 }
 
