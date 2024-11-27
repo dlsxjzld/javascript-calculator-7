@@ -60,12 +60,16 @@ describe('문자열 계산기', () => {
       expect(logSpy).toHaveBeenCalledWith(expect.stringContaining(output));
     });
   });
-  test('"" => 0', async () => {
-    const inputs = [''];
-    mockQuestions(inputs);
+  test.each([
+    ['', '결과 : 0'],
+    // ['1,2', '결과 : 3'],
+    // ['1,2,3', '결과 : 6'],
+    // ['1,2:3', '결과 : 6'],
+  ])('정상값 테스트', async (input, userOutput) => {
+    mockQuestions([input]);
 
     const logSpy = getLogSpy();
-    const outputs = ['결과 : 0'];
+    const outputs = [userOutput];
 
     const app = new App();
     await app.run();
