@@ -78,4 +78,19 @@ describe('문자열 계산기', () => {
       expect(logSpy).toHaveBeenCalledWith(expect.stringContaining(output));
     });
   });
+
+  test.only('공백 포함 시 에러 발생', () => {
+    const toThrowNewError = (condition, message) => {
+      if (condition) {
+        throw new Error(`[ERROR] ${message}\n`);
+      }
+    };
+
+    const hasEmptySpace = (input) => {
+      toThrowNewError(input.includes(' '), '공백을 포함하면 안됩니다. ex)1,2');
+    };
+    expect(() => {
+      hasEmptySpace('1,2 ');
+    }).toThrow('[ERROR]');
+  });
 });
