@@ -6,12 +6,12 @@ const toThrowNewError = (condition, message) => {
   }
 };
 
-const emptyInput = (input) => {
-  toThrowNewError(input === '');
+const hasEmptySpace = (input) => {
+  toThrowNewError(input.includes(' '), '공백을 포함하면 안됩니다. ex)1,2');
 };
 
 const check = (input) => {
-  emptyInput(input);
+  hasEmptySpace(input);
 };
 
 class App {
