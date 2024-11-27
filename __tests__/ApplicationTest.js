@@ -1,6 +1,12 @@
 import { MissionUtils } from '@woowacourse/mission-utils';
 import App from '../src/App.js';
 
+const toThrowNewError = (condition, message) => {
+  if (condition) {
+    throw new Error(`[ERROR] ${message}\n`);
+  }
+};
+
 const mockQuestions = (inputs) => {
   MissionUtils.Console.readLineAsync = jest.fn();
 
@@ -79,18 +85,26 @@ describe('문자열 계산기', () => {
     });
   });
 
-  test.only('공백 포함 시 에러 발생', () => {
-    const toThrowNewError = (condition, message) => {
-      if (condition) {
-        throw new Error(`[ERROR] ${message}\n`);
-      }
-    };
-
+  test('공백 포함 시 에러 발생', () => {
     const hasEmptySpace = (input) => {
       toThrowNewError(input.includes(' '), '공백을 포함하면 안됩니다. ex)1,2');
     };
     expect(() => {
       hasEmptySpace('1,2 ');
+    }).toThrow('[ERROR]');
+  });
+
+  test.only('구분자가 아닌 문자가 섞여있으면 에러 발생', () => {
+    const hasStringType = (input) => {
+      const splitInputs = input.split(new RegExp([',', ':'].join('|'))).map(Number);
+      toThrowNewError(
+        splitInputs.some((splitInput) => !Number.isInteger(splitInput)),
+        '구분자가 아닌 문자가 섞여있습니다.',
+      );
+    };
+
+    expect(() => {
+      hasStringType('1,2a');
     }).toThrow('[ERROR]');
   });
 });
