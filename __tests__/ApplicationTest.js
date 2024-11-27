@@ -52,6 +52,9 @@ describe('문자열 계산기', () => {
     ['1,2', '결과 : 3'],
     ['1,2,3', '결과 : 6'],
     ['1,2:3', '결과 : 6'],
+    ['//.\\n1,2:3', '결과 : 6'],
+    ['//.\\n1,2:3.4', '결과 : 10'],
+    ['//;\\n1,2:3.4', '결과 : 6.4'],
   ])('정상값 테스트', async (input, userOutput) => {
     mockQuestions([input]);
 
@@ -76,10 +79,16 @@ describe('문자열 계산기', () => {
   });
 
   test('구분자가 아닌 문자가 섞여있으면 에러 발생', () => {
+    const convertType = (val) => {
+      if (val === '') {
+        return NaN;
+      }
+      return Number(val);
+    };
     const hasStringType = (input) => {
-      const splitInputs = input.split(new RegExp([',', ':'].join('|'))).map(Number);
+      const splitInputs = input.split(new RegExp([',', ':'].join('|'))).map(convertType);
       toThrowNewError(
-        splitInputs.some((splitInput) => !Number.isInteger(splitInput)),
+        splitInputs.some((splitInput) => Number.isNaN(splitInput)),
         '구분자가 아닌 문자가 섞여있습니다.',
       );
     };
