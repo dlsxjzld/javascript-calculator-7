@@ -1,5 +1,31 @@
 # javascript-calculator-precourse
 
+## 프로젝트 구조
+
+```
+practice-calculator
+├─ .npmrc
+├─ README.md
+├─ __tests__
+│  └─ ApplicationTest.js
+├─ package-lock.json
+├─ package.json
+└─ src
+   ├─ App.js
+   ├─ index.js
+   ├─ model
+   │  └─ Calculator.js
+   ├─ util
+   │  └─ util.js
+   ├─ validation
+   │  └─ validation.js
+   └─ view
+      └─ View.js
+
+```
+
+## 구현 기능 목록
+
 - [x] 입력한 문자열에서 숫자를 추출하여 더하는 계산기를 구현한다.
 
   - [x] 쉼표(,) 또는 콜론(:)을 구분자로 가지는 문자열을 전달하는 경우 구분자를 기준으로 분리한 각 숫자의 합을 반환한다.
@@ -33,7 +59,10 @@
 4. validation 을 어떻게 처리하면 좋을지 고민이다.
    1. 함수로 할지 클래스로 설정해서 할지.
    2. 어디서 처리할지도 고민이다. input(view) 받는 곳에서 할지 아니면 컨트롤러에서 할지
+      - 현재는 모델 내부에서 진행?
 5. 사용자 입력(input)을 가공해서 (ex: 이스케이프 처리) 사용해야할 때가 있는데 이걸 컨트롤러에서 검증이 끝난 후에 컨트롤러에서 가공시켰다. 이게 맞는 방식일까?
+   - 현재는 모델 내부에서 가공시키고 있습니다.
+6. MVC 패턴 + util + validation 구조로 만들어봤는데 MVC 패턴에 맞게 잘 나뉜 걸까요?
 
 ## 순서
 

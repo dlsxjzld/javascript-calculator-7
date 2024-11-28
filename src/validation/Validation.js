@@ -1,4 +1,4 @@
-import { escapeRegExp } from './util.js';
+import { escapeRegExp } from '../util/util.js';
 
 const toThrowNewError = (condition, message) => {
   if (condition) {
